@@ -6,34 +6,49 @@ public class Person
     #region Propeties
 
     /// <summary>
-    /// Свойтсво айди
+    /// Айди
     /// </summary>
-    private short Id { get; set; }
+    public short Id { get; set; }
     
     /// <summary>
-    /// Свойство имя
+    /// Имя
     /// </summary>
-    private string Name { get; set; }
+    public string Name { get; set; }
     
     /// <summary>
-    /// Свойство фамилия
+    /// Фамилия
     /// </summary>
-    private string LastName { get; set; }
+    public string LastName { get; set; }
     
     /// <summary>
-    /// Свойство отчество
+    /// Отчество
     /// </summary>
-    private string Surname { get; set; }
+    public string Surname { get; set; }
     
     /// <summary>
-    /// Свойство номера телефона
+    /// Номера телефона
     /// </summary>
-    private short NumberPhone { get;set; }
+    public short NumberPhone { get;set; }
     
     /// <summary>
-    /// Свойство серии и номера паспорта
+    /// Серия и номера паспорта
     /// </summary>
-    private string SeriesAndNumberPassport { get; set; }
+    public string SeriesAndNumberPassport { get; set; }
+    
+    /// <summary>
+    /// Дата и время изменений
+    /// </summary>
+    public DateTime DateAndTimeChanged { get; set; }
+    
+    /// <summary>
+    /// Какие дынные изменены
+    /// </summary>
+    public string WhatDataChanged { get; set; }
+    
+    /// <summary>
+    /// кто изменил данные
+    /// </summary>
+    public string WhoDataChed { get; set; }
     
     #endregion
     
