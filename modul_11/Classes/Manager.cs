@@ -1,91 +1,111 @@
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.SymbolStore;
 using static System.Console;
 namespace modul_11.Classes;
 
 public class Manager : Consultant, IWorkableWithFile,ISetableData
 {
-    /// <summary>
-    /// Конструтор Менаджера
-    /// </summary>
-    public Manager()
-    {
-       var _persons = new List<Person>();
-    }
+    #region Methods
 
     /// <summary>
     /// Метод добавляет нового человека в список
     /// </summary>
     public void AddNewPerson()
     {
-        Person person;
-        string name;
+        string name = default;
         while (flag)
         {
-            WriteLine("\nВведите Имя >>> ");
+            Write("\nВведите Имя >>> ");
             name = ReadLine();
-            if (string.IsNullOrEmpty(name))
-            {
-                WriteLine("Поле 'Имя' нужно обязательно заполнить!");
-                return;
-            }
+            if (name is not null & name is not "0" & name is not "" ) flag = false;
+            if (flag) WriteLine("\nИмя введено не корректно, попробуйте сначала");
         }
-        string lastname; 
-        while (flag) 
-        { 
-            WriteLine("\nВведите Фамилию >>>"); 
-            lastname = ReadLine(); 
-            if (string.IsNullOrEmpty(lastname)) 
-            { 
-                WriteLine("Поле 'Фамилия' нужно обязательно заполнить!"); 
-                return;
-            }
-        }
-        string surname; 
+        flag = true;
+        string lastName = default;
         while (flag)
         {
-            WriteLine("\nВведите отчество >>>");
+            Write("\nВведите Фамилию >>> ");
+            lastName = ReadLine();
+            if (lastName is not null & lastName is not "0" & lastName is not "" ) flag = false;
+            if (flag) WriteLine("\nФамилия введена не корректно, попробуйте сначала");
+        }
+        flag = true;
+        string surname = default;
+        while (flag)
+        {
+            Write("\nВведите Отчество >>> ");
             surname = ReadLine();
-            if (string.IsNullOrEmpty(surname))
-            {
-                WriteLine("Поле 'Отчество' нужно обязательно заполнить!");
-            }
-            
+            if (surname is not null & surname is not "0" & surname is not "" ) flag = false;
+            if (flag) WriteLine("\nОтчество введено не корректно, попробуйте сначала");
         }
-        short numberPhone;
+        flag = true;
+        string numberPhone = default;
         while (flag)
         {
-            WriteLine("\nВведите номер телефона >>>");
-            string userInput = ReadLine();
-            bool checkUserInput = short.TryParse(userInput, out short result);
-            if (checkUserInput | userInput.Length == 11)
+            Write("\nВведите номер телефона >>> ");
+            numberPhone = ReadLine();
+            char[] array = numberPhone.ToArray();
+            bool checkNumber = short.TryParse(numberPhone, out short result);
+            if (checkNumber)
             {
-                numberPhone = result;
-                flag = false;
+                if (array.Count() is not 11) WriteLine("\nНомер телефона состоит из 11 цифр, попробуйте снова");
             }
-            WriteLine("Номер телефона состоит из 11 цифр!");
-            return;
+            if (array.Count() is 11) flag = false;
         }
-        string seriesAndNumberPassport;
+        flag = true;
+        string seriesAndNumberPassport = default;
         while (flag)
         {
-            WriteLine("\nВведите серию и номер паспорта\nФормат ввода  1234|456789");
-            string userInput = ReadLine();
-            char[] chars = userInput.ToArray();
-            if (chars[4] == '|' | chars.Length == 11 )
+            Write("\nВведите номер и серию пасспорта (Формат ввода: 1234|123456) >>> ");
+            seriesAndNumberPassport = ReadLine();
+            char[] array = seriesAndNumberPassport.ToArray();
+            if (array.Count() is 11)
             {
-                seriesAndNumberPassport = userInput;
-                flag = false;
+                if (array[4] is '|')
+                {
+                    flag = false;
+                }
             }
-            WriteLine("Некоректный ввод!");
-            return;
-        }    
-        
+            if (array.Count() is not 11) WriteLine("Серия и номер пасспорта введены не корректно, попробуйте снова");
+        }
+        DateTime dateAndTimeChanged = DateTime.Now;
+        string whatDataChanged = "Создание пользователя";
+        string whoDataChed = "Менеджер";
+        short id = default;
+        if (_persons?.Count == null) id = 1;
+        if (_persons?.Count != null) id = Convert.ToInt16(_persons.Count + 1);
+        Person person = new Person(id,name, 
+            lastName,
+            surname,
+            numberPhone,
+            seriesAndNumberPassport,
+            dateAndTimeChanged,
+            whatDataChanged,
+            whoDataChed);
+        WriteLine("\nСоздан новый пользователь:\n");
+        WriteToConsole(person);
+        Write("\nНажмите 1 если хотите сохранить пользователя >>> ");
+        string userInput = ReadLine();
+        if (userInput is "1") _persons?.Add(person); 
+        WriteLine("\nПользователь добавлен в список!");
 
-
-
-
-
-
-        
     }
+    
+    protected override void WriteToConsole(Person item)
+    {
+        WriteLine("Айди: {0}\nИмя: {1}\nФамилия: {2}\nОтчество: {3}\nНомер телефона: {4}" +
+                             "\nCеррия и номер паспорта: {5}" +
+                             "\nДата изменений: {6}\nТип изменений: {7}\nКто внес изменения: {8}",
+            item.Id,
+            item.Name,
+            item.LastName,
+            item.Surname,
+            item.NumberPhone,
+            item.SeriesAndNumberPassport,
+            item.DateAndTimeChanged,
+            item.WhatDataChanged,
+            item.WhoDataChed);
+    }
+    
+    #endregion
 }

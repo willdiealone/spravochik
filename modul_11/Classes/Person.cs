@@ -28,7 +28,7 @@ public class Person
     /// <summary>
     /// Номера телефона
     /// </summary>
-    public short NumberPhone { get;set; }
+    public string NumberPhone { get; set; }
     
     /// <summary>
     /// Серия и номера паспорта
@@ -46,7 +46,7 @@ public class Person
     public string WhatDataChanged { get; set; }
     
     /// <summary>
-    /// кто изменил данные
+    /// Kто изменил данные
     /// </summary>
     public string WhoDataChed { get; set; }
     
@@ -62,14 +62,21 @@ public class Person
      /// <param name="surname"></param>
      /// <param name="numberPhone"></param>
      /// <param name="seriesAndNumberPassport"></param>
-    public Person(string name,string lastName,string surname,short numberPhone, string seriesAndNumberPassport)
-    {
-        Name = name;
-        LastName = lastName;
-        Surname = surname;
-        NumberPhone = numberPhone;
-        SeriesAndNumberPassport = seriesAndNumberPassport;
-    }
-    
-    #endregion
+    public Person(short id,string name,string lastName,string surname,string numberPhone, 
+         string seriesAndNumberPassport,DateTime dateAndTimeChanged,string whatDataChanged,string whoDataChed) 
+     { 
+         Id = id;
+         Name = name;
+         LastName = lastName;
+         Surname = surname;
+         NumberPhone = numberPhone;
+         SeriesAndNumberPassport = seriesAndNumberPassport;
+         DateAndTimeChanged = dateAndTimeChanged;
+         WhatDataChanged = whatDataChanged;
+         WhoDataChed = whoDataChed;
+     }
+
+     public Person() {}
+     
+     #endregion
 }
