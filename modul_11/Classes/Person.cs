@@ -62,8 +62,9 @@ public class Person
      /// <param name="surname"></param>
      /// <param name="numberPhone"></param>
      /// <param name="seriesAndNumberPassport"></param>
-    public Person(short id,string name,string lastName,string surname,string numberPhone, 
-         string seriesAndNumberPassport,DateTime dateAndTimeChanged,string whatDataChanged,string whoDataChed) 
+    public Person(short id = 0,string name = null,string lastName = null,string surname = null,string numberPhone = null, 
+         string seriesAndNumberPassport = null,DateTime dateAndTimeChanged = default,string whatDataChanged = null,
+         string whoDataChed = null) 
      { 
          Id = id;
          Name = name;

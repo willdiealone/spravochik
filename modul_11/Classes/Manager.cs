@@ -1,46 +1,45 @@
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.SymbolStore;
+using static modul_11.Classes.WorkableWithFile;
 using static System.Console;
 namespace modul_11.Classes;
 
-public class Manager : Consultant, IWorkableWithFile,ISetableData
+public class Manager : Consultant, ISetableData
 {
     #region Methods
 
     /// <summary>
-    /// Метод добавляет нового человека в список
+    /// Метод создает и добавляет нового человека в список
     /// </summary>
     public void AddNewPerson()
     {
         string name = default;
-        while (flag)
+        while (isValidInput)
         {
             Write("\nВведите Имя >>> ");
             name = ReadLine();
-            if (name is not null & name is not "0" & name is not "" ) flag = false;
-            if (flag) WriteLine("\nИмя введено не корректно, попробуйте сначала");
+            if (!string.IsNullOrWhiteSpace(name)) isValidInput = false;
+            else WriteLine("\nИмя введено не корректно, попробуйте сначала");
         }
-        flag = true;
+        isValidInput = true;
         string lastName = default;
-        while (flag)
+        while (isValidInput)
         {
             Write("\nВведите Фамилию >>> ");
             lastName = ReadLine();
-            if (lastName is not null & lastName is not "0" & lastName is not "" ) flag = false;
-            if (flag) WriteLine("\nФамилия введена не корректно, попробуйте сначала");
+            if (!string.IsNullOrWhiteSpace(lastName)) isValidInput = false;
+            else WriteLine("\nФамилия введена не корректно, попробуйте сначала");
         }
-        flag = true;
+        isValidInput = true;
         string surname = default;
-        while (flag)
+        while (isValidInput)
         {
             Write("\nВведите Отчество >>> ");
             surname = ReadLine();
-            if (surname is not null & surname is not "0" & surname is not "" ) flag = false;
-            if (flag) WriteLine("\nОтчество введено не корректно, попробуйте сначала");
+            if (!string.IsNullOrWhiteSpace(surname)) isValidInput = false;
+            else WriteLine("\nОтчество введено не корректно, попробуйте сначала");
         }
-        flag = true;
+        isValidInput = true;
         string numberPhone = default;
-        while (flag)
+        while (isValidInput)
         {
             Write("\nВведите номер телефона >>> ");
             numberPhone = ReadLine();
@@ -50,11 +49,11 @@ public class Manager : Consultant, IWorkableWithFile,ISetableData
             {
                 if (array.Count() is not 11) WriteLine("\nНомер телефона состоит из 11 цифр, попробуйте снова");
             }
-            if (array.Count() is 11) flag = false;
+            else isValidInput = false;
         }
-        flag = true;
+        isValidInput = true;
         string seriesAndNumberPassport = default;
-        while (flag)
+        while (isValidInput)
         {
             Write("\nВведите номер и серию пасспорта (Формат ввода: 1234|123456) >>> ");
             seriesAndNumberPassport = ReadLine();
@@ -63,17 +62,19 @@ public class Manager : Consultant, IWorkableWithFile,ISetableData
             {
                 if (array[4] is '|')
                 {
-                    flag = false;
+                    isValidInput = false;
                 }
             }
-            if (array.Count() is not 11) WriteLine("Серия и номер пасспорта введены не корректно, попробуйте снова");
+            else WriteLine("Серия и номер пасспорта введены не корректно, попробуйте снова");
         }
         DateTime dateAndTimeChanged = DateTime.Now;
         string whatDataChanged = "Создание пользователя";
         string whoDataChed = "Менеджер";
-        short id = default;
-        if (_persons?.Count == null) id = 1;
-        if (_persons?.Count != null) id = Convert.ToInt16(_persons.Count + 1);
+        short id = 1;
+        if (_persons != null)
+        {
+            id = Convert.ToInt16(_persons.Count + 1);
+        }
         Person person = new Person(id,name, 
             lastName,
             surname,
@@ -86,11 +87,20 @@ public class Manager : Consultant, IWorkableWithFile,ISetableData
         WriteToConsole(person);
         Write("\nНажмите 1 если хотите сохранить пользователя >>> ");
         string userInput = ReadLine();
-        if (userInput is "1") _persons?.Add(person); 
+        if (userInput is "1")
+        {
+            _persons.Add(person);
+            _persons.OrderBy(p => p.Id).ToList();
+            SeriaizationToXml(_persons);
+        }
         WriteLine("\nПользователь добавлен в список!");
 
     }
     
+    /// <summary>
+    /// Метод выводит данные в консоль
+    /// </summary>
+    /// <param name="item"></param>
     protected override void WriteToConsole(Person item)
     {
         WriteLine("Айди: {0}\nИмя: {1}\nФамилия: {2}\nОтчество: {3}\nНомер телефона: {4}" +
@@ -105,6 +115,12 @@ public class Manager : Consultant, IWorkableWithFile,ISetableData
             item.DateAndTimeChanged,
             item.WhatDataChanged,
             item.WhoDataChed);
+    }
+
+
+    public void DeserializeListPerson()
+    {
+        
     }
     
     #endregion

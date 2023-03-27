@@ -5,6 +5,7 @@ Manager manager = new Manager();
 
 manager.AddNewPerson();
 
+
 ReadKey();
 
 
