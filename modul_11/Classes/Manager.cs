@@ -16,7 +16,7 @@ public class Manager : Consultant, ISetableData
         {
             Write("\nВведите Имя >>> ");
             name = ReadLine();
-            if (!string.IsNullOrWhiteSpace(name)) isValidInput = false;
+            if (!string.IsNullOrWhiteSpace(name) && name != "0") isValidInput = false;
             else WriteLine("\nИмя введено не корректно, попробуйте сначала");
         }
         isValidInput = true;
@@ -25,7 +25,7 @@ public class Manager : Consultant, ISetableData
         {
             Write("\nВведите Фамилию >>> ");
             lastName = ReadLine();
-            if (!string.IsNullOrWhiteSpace(lastName)) isValidInput = false;
+            if (!string.IsNullOrWhiteSpace(lastName) && lastName != "0") isValidInput = false;
             else WriteLine("\nФамилия введена не корректно, попробуйте сначала");
         }
         isValidInput = true;
@@ -34,7 +34,7 @@ public class Manager : Consultant, ISetableData
         {
             Write("\nВведите Отчество >>> ");
             surname = ReadLine();
-            if (!string.IsNullOrWhiteSpace(surname)) isValidInput = false;
+            if (!string.IsNullOrWhiteSpace(surname) && surname != "0") isValidInput = false;
             else WriteLine("\nОтчество введено не корректно, попробуйте сначала");
         }
         isValidInput = true;
@@ -116,12 +116,5 @@ public class Manager : Consultant, ISetableData
             item.WhatDataChanged,
             item.WhoDataChed);
     }
-
-
-    public void DeserializeListPerson()
-    {
-        
-    }
-    
     #endregion
 }
