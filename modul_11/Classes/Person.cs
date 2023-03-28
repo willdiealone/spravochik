@@ -38,7 +38,7 @@ public class Person
     /// <summary>
     /// Дата и время изменений
     /// </summary>
-    public DateTime DateAndTimeChanged { get; set; }
+    public string DateAndTimeChanged { get; set; }
     
     /// <summary>
     /// Какие дынные изменены
@@ -63,7 +63,7 @@ public class Person
      /// <param name="numberPhone"></param>
      /// <param name="seriesAndNumberPassport"></param>
     public Person(short id = 0,string name = null,string lastName = null,string surname = null,string numberPhone = null, 
-         string seriesAndNumberPassport = null,DateTime dateAndTimeChanged = default,string whatDataChanged = null,
+         string seriesAndNumberPassport = null,string dateAndTimeChanged = default,string whatDataChanged = null,
          string whoDataChed = null) 
      { 
          Id = id;

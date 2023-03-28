@@ -1,55 +1,59 @@
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
+
 namespace modul_11.Classes;
 
 public  class WorkableWithFile 
 {
-    private static readonly string PathDir = "/Users/lilrockstar/Desktop/MyDir";
-    private static readonly string FileName = "data.xml";
+    private const string pathDir = "/Users/lilrockstar/Desktop/MyDir";
+    private const string fileName = "data.json";
     protected List<Person> _persons = new();
     protected bool isValidInput = true;
 
 
     public  WorkableWithFile()
     {
-        List<Person> allPersons = DeseriaizationToXml();
+        List<Person> allPersons = DeseriaizationToJson();
         
-        if (_persons is null)
+        if (allPersons != null)
         {
             _persons = allPersons;
+            Console.WriteLine(" => Ctor WorkableWithFile");
         }
     }
-    public void SeriaizationToXml(List<Person> person)
+    public void SeriaizationToJson(List<Person> person)
     {
         if (_persons is null)
         {
             return;
         }
-        string path = Path.Combine(PathDir + FileName);
-        XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Person>));
-        Stream fs = new FileStream(path, FileMode.Open, FileAccess.Write);
-        var _person = person.OrderBy(p => p.Id).ToList();
-        xmlSerializer.Serialize(fs,_person);
-        fs.Close();
+        string path = Path.Combine(pathDir, fileName);
+        _persons = person.OrderBy(p => p.Id).ToList();
+        string json = JsonConvert.SerializeObject(_persons,Formatting.Indented);
+        File.WriteAllText(path,json);
+        
     }
 
-    public List<Person> DeseriaizationToXml()
+    public List<Person> DeseriaizationToJson()
     {
-        List<Person> readPerson = new List<Person>();
-        if (!Directory.Exists(PathDir))
+        string path = Path.Combine(pathDir, fileName);
+        if (!Directory.Exists(pathDir))
         {
-            Directory.CreateDirectory(PathDir);
+            Directory.CreateDirectory(pathDir);
         }
-        string path = Path.Combine(PathDir, FileName);
-        if (File.Exists(path))
+        bool checkFile = File.Exists(path);
+        if (!checkFile)
         {
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<Person>));
-            using (Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
-            {
-                readPerson = xmlSerializer.Deserialize(stream) as List<Person>;
-            }
+            File.Create(path).Close();
         }
-        return readPerson;
+        string json = File.ReadAllText(path);
+        var _people = JsonConvert.DeserializeObject<List<Person>>(json);
+        if (_people is not null)
+        {
+            _people = _people.OrderBy(a => a.Id).ToList();
+        }
+        return _people;
     }
-
+    
 }

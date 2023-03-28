@@ -2,10 +2,8 @@
 using static System.Console;
 
 Manager manager = new Manager();
-
 manager.AddNewPerson();
-
-
+//manager.ChangePersonById();
 ReadKey();
 
 
