@@ -1,10 +1,75 @@
 using static System.Console;
 using static System.DateTime;
 namespace modul_11.Classes;
+using static WorkableWithFile;
 
-public class Manager : Consultant, ISetableData
+public class Manager : Human, ISetableData
 {
-    #region Methods
+    #region Delegate
+
+    public delegate void SerializeDelegate(List<Person> _persons);
+
+    #endregion
+    
+    #region event
+    public event SerializeDelegate SerializeEvent;
+    
+    #endregion
+
+    #region Construct
+
+    public Manager()
+    {
+        DeserializeEvent += DeseriaizationToJson;
+        SerializeEvent += SeriaizationToJson;
+        GetAllContact();
+    }
+
+    #endregion
+
+    #region PublicOverrideMethods
+
+    public override void GetAllContact()
+    {
+        base.GetAllContact();
+        int count = _persons.Count();
+        if (count == null)
+        {
+            WriteLine($"На данный момент пользователей в списке: {count}\n");
+        }
+        if (count != null)
+        {
+            WriteLine($"На данный момент пользователей в списке: {count}\n");
+        }
+    }
+
+    #endregion
+
+    #region ProtectedOverrideMethods
+
+    /// <summary>
+    /// Метод выводит данные в консоль
+    /// </summary>
+    /// <param name="item"></param>
+    protected override void WriteToConsole(Person item)
+    {
+        WriteLine("Айди: {0}\nИмя: {1}\nФамилия: {2}\nОтчество: {3}\nНомер телефона: {4}" +
+                  "\nCеррия и номер паспорта: {5}" +
+                  "\nДата изменений: {6}\nТип изменений: {7}\nКто внес изменения: {8}\n",
+            item.Id,
+            item.Name,
+            item.LastName,
+            item.Surname,
+            item.NumberPhone,
+            item.SeriesAndNumberPassport,
+            item.DateAndTimeChanged,
+            item.WhatDataChanged,
+            item.WhoDataChed);
+    }
+
+    #endregion
+    
+    #region PublicMethods
 
     /// <summary>
     /// Метод создает и добавляет нового человека в список
@@ -43,10 +108,10 @@ public class Manager : Consultant, ISetableData
         {
             Write("\nВведите номер телефона >>> ");
             numberPhone = ReadLine();
-            bool checkNumber = short.TryParse(numberPhone, out short result);
-            if (checkNumber)
+            char[] array = numberPhone.ToArray();
+            if (numberPhone.Length == 11 && numberPhone.All(char.IsDigit))
             {
-                if (numberPhone.Length != 11) WriteLine("\nНомер телефона состоит из 11 цифр, попробуйте снова");
+                if (numberPhone.Length != 11 | !numberPhone.All(char.IsDigit)) WriteLine("\nНомер телефона состоит из 11 цифр, попробуйте снова");
             }
             else isValidInput = false;
         }
@@ -86,51 +151,11 @@ public class Manager : Consultant, ISetableData
         WriteToConsole(person);
         _persons.Add(person); 
         _persons.OrderBy(p => p.Id).ToList(); 
-        SeriaizationToJson(_persons);
+        SerializeEvent?.Invoke(_persons);
         WriteLine("\nПользователь добавлен в список!");
 
     }
-
-    /// <summary>
-    /// Метод выводит всех сохраненных людей
-    /// </summary>
-    public void GetAllContact()
-    {
-        _persons = DeseriaizationToJson();
-        
-        if (_persons.Count() == 0)
-        {
-            WriteLine("Нет контактов");
-        }
-        else
-        {
-            foreach (var item in _persons)
-            {
-                WriteToConsole(item);
-            }
-        }
-    }
     
-    /// <summary>
-    /// Метод выводит данные в консоль
-    /// </summary>
-    /// <param name="item"></param>
-    protected override void WriteToConsole(Person item)
-    {
-        WriteLine("Айди: {0}\nИмя: {1}\nФамилия: {2}\nОтчество: {3}\nНомер телефона: {4}" +
-                             "\nCеррия и номер паспорта: {5}" +
-                             "\nДата изменений: {6}\nТип изменений: {7}\nКто внес изменения: {8}",
-            item.Id,
-            item.Name,
-            item.LastName,
-            item.Surname,
-            item.NumberPhone,
-            item.SeriesAndNumberPassport,
-            item.DateAndTimeChanged,
-            item.WhatDataChanged,
-            item.WhoDataChed);
-    }
-        
     /// <summary>
     /// метод возвращает человека по айди
     /// </summary>
@@ -142,6 +167,9 @@ public class Manager : Consultant, ISetableData
         return person;
     }
 
+    /// <summary>
+    /// Метод изменения пользователя по айди
+    /// </summary>
     public void ChangePersonById()
     {
         if (_persons == null)
@@ -228,20 +256,20 @@ public class Manager : Consultant, ISetableData
                       case "4": 
                           Write("\nВведите новый номер телефона >>> ");
                           newNumberPhone = ReadLine();
-                          bool checkResult = short.TryParse(newNumberPhone, out short checkNumber);
-                          if (checkResult)
+                          if (newNumberPhone.Length == 11 && newNumberPhone.All(char.IsDigit))
                           {
-                              if (newNumberPhone.Length == 11)
+                              if (!newNumberPhone.All(char.IsDigit))
                               {
-                                  person.NumberPhone = newNumberPhone;
-                                  person.DateAndTimeChanged = Now.ToShortTimeString();;
-                                  person.WhatDataChanged = "Изменение номера телефона";
-                                  person.WhoDataChed = "Менеджер";
-                                  Clear();
-                                  WriteLine($"Изменен номер телефона у пользователя с айди - {idInput}\n");
-                                  WriteToConsole(person);
+                                  WriteLine("\nНомер телефона состоит из 11 цифр, попробуйте снова");
                               }
-                              else WriteLine("\nНомер телефона состоит из 11 цифр, попробуйте снова");
+                              person.NumberPhone = newNumberPhone; 
+                              person.DateAndTimeChanged = Now.ToShortTimeString();; 
+                              person.WhatDataChanged = "Изменение номера телефона"; 
+                              person.WhoDataChed = "Менеджер"; 
+                              Clear(); 
+                              WriteLine($"Изменен номер телефона у пользователя с айди - {idInput}\n"); 
+                              WriteToConsole(person);
+                                  
                           }
                           break;
                       case "5": 
