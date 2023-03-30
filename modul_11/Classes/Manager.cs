@@ -6,14 +6,16 @@ using static WorkableWithFile;
 public class Manager : Human, ISetableData
 {
     #region Delegate
-
+    
     public delegate void SerializeDelegate(List<Person> _persons);
+    public event DeserializeDelegate DeserializeEvent;
 
     #endregion
     
     #region event
     public event SerializeDelegate SerializeEvent;
-    
+    public delegate List<Person> DeserializeDelegate();
+
     #endregion
 
     #region Construct
@@ -31,15 +33,15 @@ public class Manager : Human, ISetableData
 
     public override void GetAllContact()
     {
-        base.GetAllContact();
-        int count = _persons.Count();
-        if (count == null)
+        _persons = DeserializeEvent?.Invoke();
+        
+        if (_persons.Count >= 1)
         {
-            WriteLine($"На данный момент пользователей в списке: {count}\n");
+            WriteLine($"На данный момент пользователей в списке: {_persons.Count}\n");
         }
-        if (count != null)
+        if (_persons.Count < 1)
         {
-            WriteLine($"На данный момент пользователей в списке: {count}\n");
+            WriteLine($"На данный момент пользователей в списке: {_persons.Count}\n");
         }
     }
 
@@ -64,7 +66,7 @@ public class Manager : Human, ISetableData
             item.SeriesAndNumberPassport,
             item.DateAndTimeChanged,
             item.WhatDataChanged,
-            item.WhoDataChed);
+            item.WhoDataChenged);
     }
 
     #endregion
@@ -111,9 +113,12 @@ public class Manager : Human, ISetableData
             char[] array = numberPhone.ToArray();
             if (numberPhone.Length == 11 && numberPhone.All(char.IsDigit))
             {
-                if (numberPhone.Length != 11 | !numberPhone.All(char.IsDigit)) WriteLine("\nНомер телефона состоит из 11 цифр, попробуйте снова");
+                isValidInput = false;
             }
-            else isValidInput = false;
+            else 
+            {
+                WriteLine("\nНомер телефона состоит из 11 цифр, попробуйте снова");
+            }
         }
         isValidInput = true;
         string seriesAndNumberPassport = default;
@@ -153,7 +158,21 @@ public class Manager : Human, ISetableData
         _persons.OrderBy(p => p.Id).ToList(); 
         SerializeEvent?.Invoke(_persons);
         WriteLine("\nПользователь добавлен в список!");
+        isValidInput = true;
+        if (isValidInput)
+        {
+            Write("\nЕсли хотите добавить еще одного пользователя нажмите 1, для выхода нажмите 0 >>> ");
+            string inputForChange = ReadLine();
+            if (inputForChange == "1")
+            {
+                AddNewPerson();
+            }
 
+            if (inputForChange == "0")
+            {
+                isValidInput = false;
+            }
+        }
     }
     
     /// <summary>
@@ -170,134 +189,165 @@ public class Manager : Human, ISetableData
     /// <summary>
     /// Метод изменения пользователя по айди
     /// </summary>
-    public void ChangePersonById()
+    public void ChangeDataPersonById()
     {
-        if (_persons == null)
+        if (_persons.Count < 1)
         {
-            WriteLine("\nНет контактов");
+            Write("\nНет контактов, если хотите их добавить нажмите 1, для выхода нажмите 0 >>> ");
+            string inputForChange = ReadLine();
+            if (inputForChange == "1")
+            {
+                AddNewPerson();
+            }
+            if (inputForChange == "0")
+            {
+                return;
+            }
+        }
+        else
+        {
+            while (isValidInput) 
+            { 
+                Write("\nВведите ади того чьи данные хотите изменить >>> "); 
+                string idInput = ReadLine(); 
+                if (short.TryParse(idInput, out short result)) 
+                { 
+                    Person person = ReturnPersonById(result); 
+                    if (person == null) 
+                    { 
+                        WriteLine("\nТакого пользователь нет, попробуйте еще раз"); 
+                        return; 
+                    } 
+                    if(person != null) 
+                    { 
+                        WriteLine($"\nНайден пользователь по вами введенному айди - {idInput}:\n"); 
+                        WriteToConsole(person); 
+                    } 
+                    while (isValidInput) 
+                    { 
+                        Write("\nВведите номер поля которое хотите изменить:\nName - 1 || LastName - 2 ||" +
+                            "Surname - 3 || Number Phone - 4 || Series and Number Passport - 5 ||" +
+                            " Чтобы выйте нажмите - 0\n>>> "); 
+                        string input = ReadLine(); 
+                        if (input == "0") isValidInput = false; 
+                        string newName; 
+                        string newLastName; 
+                        string newSurname; 
+                        string newNumberPhone; 
+                        string newSeriesAndNumberPassport; 
+                        switch (input) 
+                        { 
+                            case "1": 
+                                Write("\nВведите новое имя >>> "); 
+                                newName = ReadLine(); 
+                                if (!string.IsNullOrWhiteSpace(newName) && newName != "0") 
+                                { 
+                                    person.Name = newName; 
+                                    person.DateAndTimeChanged = Now.ToShortTimeString(); 
+                                    person.WhatDataChanged = "Изменение имени"; 
+                                    person.WhoDataChenged = "Менеджер"; 
+                                    Clear(); 
+                                    WriteLine($"\nИзменено имя у пользователя с айди - {idInput}:\n"); 
+                                    WriteToConsole(person); 
+                                }
+                                else WriteLine("\nНовое имя введено не корректно, попробуйте снова");
+                                break; 
+                            case "2": Write("\nВведите новую фамилию >>> "); 
+                                newLastName = ReadLine(); 
+                                if (!string.IsNullOrWhiteSpace(newLastName) && newLastName != "0") 
+                                { 
+                                    person.LastName = newLastName; 
+                                    person.DateAndTimeChanged = Now.ToShortTimeString();; 
+                                    person.WhatDataChanged = "Изменение фамилии"; 
+                                    person.WhoDataChenged = "Менеджер"; 
+                                    Clear(); 
+                                    WriteLine($"\nИзменена фамилия у пользователя с айди - {idInput}\n"); 
+                                    WriteToConsole(person); 
+                                }
+                                else WriteLine("\nНовая фамилия введена некорректно, попробуйте сначала"); 
+                                break; 
+                            case "3": 
+                                Write("Введите новое отчество >>> "); 
+                                newSurname = ReadLine(); 
+                                if (!string.IsNullOrWhiteSpace(newSurname) && newSurname != "0") 
+                                { 
+                                    person.Surname = newSurname; 
+                                    person.DateAndTimeChanged = Now.ToShortTimeString();; 
+                                    person.WhatDataChanged = "Изменение отчества"; 
+                                    person.WhoDataChenged = "Менеджер"; 
+                                    Clear(); 
+                                    WriteLine($"\nИзменено отчество у пользователя с айди - {idInput}\n"); 
+                                    WriteToConsole(person); 
+                                }
+                                else WriteLine("\nНовое отчество введено некорректно, попробуйте снова"); 
+                                break; 
+                            case "4": 
+                                Write("\nВведите новый номер телефона >>> "); 
+                                newNumberPhone = ReadLine(); 
+                                if (newNumberPhone.Length == 11 && newNumberPhone.All(char.IsDigit)) 
+                                { 
+                                    if (newNumberPhone.Length != 11 | !newNumberPhone.All(char.IsDigit)) 
+                                    { 
+                                        WriteLine("\nНомер телефона состоит из 11 цифр, попробуйте снова"); 
+                                    } 
+                                    person.NumberPhone = newNumberPhone; 
+                                    person.DateAndTimeChanged = Now.ToShortTimeString();; 
+                                    person.WhatDataChanged = "Изменение номера телефона"; 
+                                    person.WhoDataChenged = "Менеджер"; 
+                                    Clear(); 
+                                    WriteLine($"\nИзменен номер телефона у пользователя с айди - {idInput}\n"); 
+                                    WriteToConsole(person); 
+                                } 
+                                break; 
+                            case "5": 
+                                Write("\nВведите новые серию и номер пасспорта (Формат ввода: 1234|123456) >>> "); 
+                                newSeriesAndNumberPassport = ReadLine(); 
+                                char[] array = newSeriesAndNumberPassport.ToArray(); 
+                                if (array[4] == '|') 
+                                { 
+                                    if (array.Count() == 11) 
+                                    { 
+                                        person.SeriesAndNumberPassport = newSeriesAndNumberPassport; 
+                                        person.DateAndTimeChanged = Now.ToShortTimeString();; 
+                                        person.WhatDataChanged = "Изменение серии и номера паспорта"; 
+                                        person.WhoDataChenged = "Менеджер"; 
+                                    } 
+                                }
+                                else WriteLine("\nНовые серрия и номе рпасспорта введены не корректно, попробуйте снова"); 
+                                break; 
+                            case "0": 
+                                isValidInput = false; 
+                                break; 
+                            default: 
+                                WriteLine("\nТакого номера нет в списке, попробйте снова"); 
+                                break; 
+                        } 
+                    } 
+                    SerializeEvent.Invoke(_persons); 
+                }
+                else 
+                { 
+                    WriteLine("\nНекорректно введен айди пользвателя, попробуйте сначала"); 
+                    return; 
+                } 
+            }
+        
         }
 
-        while (isValidInput)
+        
+    }
+
+    /// <summary>
+    /// Метод сортирует пользователей по имени
+    /// </summary>
+    public void SrotForName()
+    {
+        if (_persons != null)
         {
-            Write("\nВведите ади того чьи данные хотите изменить >>> ");
-            string idInput = ReadLine();
-            if (short.TryParse(idInput, out short result))
+            _persons = _persons.OrderBy(p => p.Name).ToList();
+            foreach (var item in _persons)
             {
-                var person = ReturnPersonById(result);
-                if (person == null)
-                {
-                    WriteLine("\nТакого контакто нет, попробуйте еще раз");
-                    return;
-                }
-                if(person != null)
-                {
-                    WriteLine($"\nНайден контакт по вами введенному айди - {idInput}:\n");
-                    WriteToConsole(person);
-                }
-                while (isValidInput)
-                {
-                  Write("\nВведите номер поля которое хотите изменить:\nName - 1 || LastName - 2 ||" +
-                            "Surname - 3 || Number Phone - 4 || Series and Number Passport - 5 ||" +
-                            " Чтобы выйте нажмите - 0\n>>> ");
-                  string input = ReadLine();
-                  if (input == "0") isValidInput = false;
-                  string newName;
-                  string newLastName;
-                  string newSurname ;
-                  string newNumberPhone;
-                  string newSeriesAndNumberPassport;
-                  switch (input)
-                  {
-                      case "1":
-                          Write("\nВведите новое имя >>> ");
-                          newName = ReadLine();
-                          if (!string.IsNullOrWhiteSpace(newName) && newName != "0")
-                          {
-                              person.Name = newName;
-                              person.DateAndTimeChanged = Now.ToShortTimeString();
-                              person.WhatDataChanged = "Изменение имени";
-                              person.WhoDataChed = "Менеджер";
-                              Clear();
-                              WriteLine($"\nИзменено имя у пользователя с айди - {idInput}:\n");
-                              WriteToConsole(person);
-                          }
-                          else WriteLine("\nНовое имя введено не корректно, попробуйте снова");
-                          
-                          break;
-                      case "2": Write("\nВведите новую фамилию >>> ");
-                          newLastName = ReadLine();
-                          if (!string.IsNullOrWhiteSpace(newLastName) && newLastName != "0")
-                          {
-                              person.LastName = newLastName;
-                              person.DateAndTimeChanged = Now.ToShortTimeString();;
-                              person.WhatDataChanged = "Изменение фамилии";
-                              person.WhoDataChed = "Менеджер";
-                              Clear();
-                              WriteLine($"\nИзменена фамилия у пользователя с айди - {idInput}\n");
-                              WriteToConsole(person);
-                          }
-                          else WriteLine("\nНовая фамилия введена некорректно, попробуйте сначала");
-                          break;
-                      case "3": 
-                          Write("Введите новое отчество >>> ");
-                          newSurname = ReadLine();
-                          if (!string.IsNullOrWhiteSpace(newSurname) && newSurname != "0")
-                          {
-                              person.Surname = newSurname;
-                              person.DateAndTimeChanged = Now.ToShortTimeString();;
-                              person.WhatDataChanged = "Изменение отчества";
-                              person.WhoDataChed = "Менеджер";
-                              Clear();
-                              WriteLine($"\nИзменено отчество у пользователя с айди - {idInput}\n");
-                              WriteToConsole(person);
-                          }
-                          else WriteLine("\nНовое отчество введено некорректно, попробуйте снова");
-                          break;
-                      case "4": 
-                          Write("\nВведите новый номер телефона >>> ");
-                          newNumberPhone = ReadLine();
-                          if (newNumberPhone.Length == 11 && newNumberPhone.All(char.IsDigit))
-                          {
-                              if (!newNumberPhone.All(char.IsDigit))
-                              {
-                                  WriteLine("\nНомер телефона состоит из 11 цифр, попробуйте снова");
-                              }
-                              person.NumberPhone = newNumberPhone; 
-                              person.DateAndTimeChanged = Now.ToShortTimeString();; 
-                              person.WhatDataChanged = "Изменение номера телефона"; 
-                              person.WhoDataChed = "Менеджер"; 
-                              Clear(); 
-                              WriteLine($"Изменен номер телефона у пользователя с айди - {idInput}\n"); 
-                              WriteToConsole(person);
-                                  
-                          }
-                          break;
-                      case "5": 
-                          Write("\nВведите новые серию и номер пасспорта (Формат ввода: 1234|123456) >>> ");
-                          newSeriesAndNumberPassport = ReadLine();
-                          char[] array = newSeriesAndNumberPassport.ToArray();
-                          if (array[4] == '|')
-                          {
-                              if (array.Count() == 11)
-                              {
-                                  person.SeriesAndNumberPassport = newSeriesAndNumberPassport;
-                                  person.DateAndTimeChanged = Now.ToShortTimeString();;
-                                  person.WhatDataChanged = "Изменение серии и номера паспорта";
-                                  person.WhoDataChed = "Менеджер";
-                              }
-                          }
-                          else WriteLine("\nНовые серрия и номе рпасспорта введены не корректно, попробуйте снова");
-                          break;
-                          default: 
-                              WriteLine("\nТакого номера нет в списке, попробйте снова");
-                              break;
-                  }
-                }
-            }
-            else
-            {
-                WriteLine("\nНекорректно введен айди пользвателя, попробуйте сначала");
-                return;
+                WriteToConsole(item);
             }
         }
     }

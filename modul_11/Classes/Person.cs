@@ -48,7 +48,7 @@ public class Person
     /// <summary>
     /// Kто изменил данные
     /// </summary>
-    public string WhoDataChed { get; set; }
+    public string WhoDataChenged { get; set; }
     
     #endregion
     
@@ -74,9 +74,12 @@ public class Person
          SeriesAndNumberPassport = seriesAndNumberPassport;
          DateAndTimeChanged = dateAndTimeChanged;
          WhatDataChanged = whatDataChanged;
-         WhoDataChed = whoDataChed;
+         WhoDataChenged = whoDataChed;
      }
-
+     
+     /// <summary>
+     /// Конструктор по умолчанию
+     /// </summary>
      public Person() {}
      
      #endregion

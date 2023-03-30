@@ -1,14 +1,22 @@
-using System.Xml.Linq;
-using System.Xml.Serialization;
 using Newtonsoft.Json;
 
 namespace modul_11.Classes;
 
 public static class WorkableWithFile 
 {
+    #region PrivateConst
+    
     private const string pathDir = "/Users/lilrockstar/Desktop/MyDir";
     private const string fileName = "data.json";
-    
+
+    #endregion
+
+    #region PublicStaticMethods
+
+    /// <summary>
+    /// Метод сериализации
+    /// </summary>
+    /// <param name="_persons"></param>
     public static void SeriaizationToJson(List<Person> _persons)
     {
         if (_persons is null)
@@ -21,6 +29,10 @@ public static class WorkableWithFile
         File.WriteAllText(path,json);
     }
 
+    /// <summary>
+    /// Метод десериализации
+    /// </summary>
+    /// <returns></returns>
     public static List<Person> DeseriaizationToJson()
     {
         string path = Path.Combine(pathDir, fileName);
@@ -33,12 +45,15 @@ public static class WorkableWithFile
         {
             File.Create(path).Close();
         }
+        List<Person> _persons = new List<Person>();
         string json = File.ReadAllText(path);
-        List<Person> _persons = JsonConvert.DeserializeObject<List<Person>>(json);
-        if (_persons is not null)
+        if (!string.IsNullOrEmpty(json))
         {
+            _persons = JsonConvert.DeserializeObject<List<Person>>(json);
             _persons = _persons.OrderBy(a => a.Id).ToList();
         }
         return _persons;
     }
+    
+    #endregion
 }
