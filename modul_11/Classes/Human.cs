@@ -4,6 +4,7 @@ public abstract class Human
     protected List<Person> _persons = new();
     public Person person = new();
     protected bool isValidInput = true;
+    protected bool check = true;
 
     public abstract void GetAllContact();
     

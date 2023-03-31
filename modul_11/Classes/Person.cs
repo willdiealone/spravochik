@@ -82,5 +82,20 @@ public class Person
      /// </summary>
      public Person() {}
      
+     public override bool Equals(object other)
+     {
+         if (other == null || GetType() != other.GetType())
+         {
+             return false;
+         }
+         Person person = (Person)other;
+        
+         return Name == person.Name
+                && LastName == person.LastName
+                && Surname == person.Surname
+                && NumberPhone == person.NumberPhone
+                && SeriesAndNumberPassport == person.SeriesAndNumberPassport;
+     }
+     
      #endregion
 }

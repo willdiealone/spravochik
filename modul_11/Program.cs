@@ -1,13 +1,9 @@
-﻿using modul_11.Classes;
+﻿using modul_11;
+using modul_11.Classes;
 using static System.Console;
 
-Human manager = new Consultant();
-
-// (manager as Manager).GetAllContact();
-
-(manager as Consultant).ChangeNumberPersonById();
-
-//manager.ChangePersonById();
+Start start = new Start();
+start.MethodonStart();
 ReadKey();
 
 

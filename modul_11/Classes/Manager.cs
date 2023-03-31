@@ -24,7 +24,7 @@ public class Manager : Human, ISetableData
     {
         DeserializeEvent += DeseriaizationToJson;
         SerializeEvent += SeriaizationToJson;
-        GetAllContact();
+        _persons = DeserializeEvent?.Invoke();
     }
 
     #endregion
@@ -33,11 +33,14 @@ public class Manager : Human, ISetableData
 
     public override void GetAllContact()
     {
-        _persons = DeserializeEvent?.Invoke();
-        
         if (_persons.Count >= 1)
         {
             WriteLine($"На данный момент пользователей в списке: {_persons.Count}\n");
+
+            foreach (var item in _persons)
+            {
+                WriteToConsole(item);
+            }
         }
         if (_persons.Count < 1)
         {
@@ -68,7 +71,7 @@ public class Manager : Human, ISetableData
             item.WhatDataChanged,
             item.WhoDataChenged);
     }
-
+    
     #endregion
     
     #region PublicMethods
@@ -78,101 +81,116 @@ public class Manager : Human, ISetableData
     /// </summary>
     public void AddNewPerson()
     {
-        string name = default;
-        while (isValidInput)
-        {
-            Write("\nВведите Имя >>> ");
-            name = ReadLine();
-            if (!string.IsNullOrWhiteSpace(name) && name != "0") isValidInput = false;
-            else WriteLine("\nИмя введено не корректно, попробуйте сначала");
-        }
-        isValidInput = true;
-        string lastName = default;
-        while (isValidInput)
-        {
-            Write("\nВведите Фамилию >>> ");
-            lastName = ReadLine();
-            if (!string.IsNullOrWhiteSpace(lastName) && lastName != "0") isValidInput = false;
-            else WriteLine("\nФамилия введена не корректно, попробуйте сначала");
-        }
-        isValidInput = true;
-        string surname = default;
-        while (isValidInput)
-        {
-            Write("\nВведите Отчество >>> ");
-            surname = ReadLine();
-            if (!string.IsNullOrWhiteSpace(surname) && surname != "0") isValidInput = false;
-            else WriteLine("\nОтчество введено не корректно, попробуйте сначала");
-        }
-        isValidInput = true;
-        string numberPhone = default;
-        while (isValidInput)
-        {
-            Write("\nВведите номер телефона >>> ");
-            numberPhone = ReadLine();
-            char[] array = numberPhone.ToArray();
-            if (numberPhone.Length == 11 && numberPhone.All(char.IsDigit))
+        while (check)
+        { 
+            string name = default;
+            isValidInput = true;
+            while (isValidInput)
             {
-                isValidInput = false;
+                Write("\nВведите Имя >>> ");
+                name = ReadLine();
+                if (!string.IsNullOrWhiteSpace(name) && name != "0") isValidInput = false;
+                else WriteLine("\nИмя введено не корректно, попробуйте сначала");
             }
-            else 
+            isValidInput = true;
+            string lastName = default;
+            while (isValidInput)
             {
-                WriteLine("\nНомер телефона состоит из 11 цифр, попробуйте снова");
+                Write("\nВведите Фамилию >>> ");
+                lastName = ReadLine();
+                if (!string.IsNullOrWhiteSpace(lastName) && lastName != "0") isValidInput = false;
+                else WriteLine("\nФамилия введена не корректно, попробуйте сначала");
             }
-        }
-        isValidInput = true;
-        string seriesAndNumberPassport = default;
-        while (isValidInput)
-        {
-            Write("\nВведите номер и серию пасспорта (Формат ввода: 1234|123456) >>> ");
-            seriesAndNumberPassport = ReadLine();
-            char[] array = seriesAndNumberPassport.ToArray();
-            if (array.Count() is 11)
+            isValidInput = true;
+            string surname = default;
+            while (isValidInput)
             {
-                if (array[4] is '|')
+                Write("\nВведите Отчество >>> ");
+                surname = ReadLine();
+                if (!string.IsNullOrWhiteSpace(surname) && surname != "0") isValidInput = false;
+                else WriteLine("\nОтчество введено не корректно, попробуйте сначала");
+            }
+            isValidInput = true;
+            string numberPhone = default;
+            while (isValidInput)
+            {
+                Write("\nВведите номер телефона >>> ");
+                numberPhone = ReadLine();
+                char[] array = numberPhone.ToArray();
+                if (numberPhone.Length == 11 && numberPhone.All(char.IsDigit))
                 {
                     isValidInput = false;
                 }
+                else 
+                {
+                    WriteLine("\nНомер телефона состоит из 11 цифр, попробуйте снова");
+                }
             }
-            else WriteLine("Серия и номер пасспорта введены не корректно, попробуйте снова");
-        }
-        string dateAndTimeChanged = Now.ToShortTimeString();
-        string whatDataChanged = "Создание пользователя";
-        string whoDataChed = "Менеджер";
-        short id = 1;
-        if (_persons != null)
-        {
-            id = Convert.ToInt16(_persons.Count + 1);
-        }
-        Person person = new Person(id,name, 
-            lastName,
-            surname,
-            numberPhone,
-            seriesAndNumberPassport,
-            dateAndTimeChanged,
-            whatDataChanged,
-            whoDataChed);
-        WriteLine("\nСоздан новый пользователь:\n");
-        WriteToConsole(person);
-        _persons.Add(person); 
-        _persons.OrderBy(p => p.Id).ToList(); 
-        SerializeEvent?.Invoke(_persons);
-        WriteLine("\nПользователь добавлен в список!");
-        isValidInput = true;
-        if (isValidInput)
-        {
-            Write("\nЕсли хотите добавить еще одного пользователя нажмите 1, для выхода нажмите 0 >>> ");
-            string inputForChange = ReadLine();
-            if (inputForChange == "1")
+            isValidInput = true;
+            string seriesAndNumberPassport = default;
+            while (isValidInput)
             {
+                Write("\nВведите номер и серию пасспорта (Формат ввода: 1234|123456) >>> ");
+                seriesAndNumberPassport = ReadLine();
+                char[] array = seriesAndNumberPassport.ToArray();
+                if (array.Count() is 11)
+                {
+                    if (array[4] is '|')
+                    {
+                        isValidInput = false;
+                    }
+                }
+                else WriteLine("Серия и номер пасспорта введены не корректно, попробуйте снова");
+            }
+            string dateAndTimeChanged = Now.ToShortTimeString();
+            string whatDataChanged = "Создание пользователя";
+            string whoDataChed = "Менеджер";
+            short id = 1;
+            if (_persons != null)
+            {
+                id = Convert.ToInt16(_persons.Count + 1);
+            }
+            Person person = new Person(id,name, 
+                lastName,
+                surname,
+                numberPhone,
+                seriesAndNumberPassport,
+                dateAndTimeChanged,
+                whatDataChanged,
+                whoDataChed);
+            WriteLine("\nСоздан новый пользователь:\n");
+            
+            WriteToConsole(person);
+            
+            // проверка на индивидуальность пользователя
+            if (_persons.Any(p => p.Equals(person)))
+            {
+                WriteLine("\nТакой пользователь уже существует, введите другие данные");
                 AddNewPerson();
+                return;
             }
-
-            if (inputForChange == "0")
+            _persons.Add(person); 
+            _persons.OrderBy(p => p.Id).ToList(); 
+            SerializeEvent?.Invoke(_persons);
+            WriteLine("\nПользователь добавлен в список!");
+            isValidInput = true;
+            if (isValidInput)
             {
-                isValidInput = false;
+                Write("\nЕсли хотите добавить еще одного пользователя нажмите 1, для выхода нажмите 0 >>> ");
+                string inputForChange = ReadLine();
+                if (inputForChange == "1")
+                {
+                    AddNewPerson();
+                }
+
+                if (inputForChange == "0")
+                {
+                    isValidInput = false;
+                    check = false;
+                }
             }
         }
+        
     }
     
     /// <summary>
@@ -351,6 +369,8 @@ public class Manager : Human, ISetableData
             }
         }
     }
-    
+
     #endregion
+
+   
 }

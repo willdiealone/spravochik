@@ -24,7 +24,7 @@ public class Consultant : Human
     {
         DeserializeEvent += DeseriaizationToJson;
         SerializeEvent += SeriaizationToJson;
-        GetAllContact();
+        _persons = DeserializeEvent?.Invoke();
     }
 
     #endregion
@@ -33,16 +33,14 @@ public class Consultant : Human
     
     public override void GetAllContact()
     {
-        _persons = DeserializeEvent?.Invoke();
-        
-        if (_persons.Count() == 0)
+        if (_persons.Count >= 1)
         {
-            WriteLine("Нет контактов");
+            WriteLine($"На данный момент пользователей в списке: {_persons.Count}\n");
         }
-        if (_persons.Count() != null)
+        if (_persons.Count < 1)
         {
             int count = _persons.Count();
-            WriteLine($"На данный момент пользователей в списке: {count}\n");
+            WriteLine($"На данный момент пользователей в списке: {_persons.Count}\n");
         }
         else
         {
@@ -97,7 +95,17 @@ public class Consultant : Human
                         {
                             SerializeEvent?.Invoke(_persons);
                             WriteLine("\nИзменения сохранены!");
-                            isValidInput = false;
+                            Write("\nЕсли хотите изменить еще пользователя нажмите - 1, чтобы выйти нажмите - 0 >>> ");
+                            string inputUser = ReadLine();
+                            if (inputUser == "1")
+                            {
+                                ChangeNumberPersonById();
+                            }
+                            if (inputUser == "0")
+                            {
+                                isValidInput = false;
+                            }
+
                         }
                     }
                     else
