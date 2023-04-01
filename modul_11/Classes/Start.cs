@@ -3,7 +3,7 @@ namespace modul_11.Classes;
 
 public class Start
 {
-    #region RrivateFields
+    #region PririvateFields
     
     private bool checkMenu = true;
     private string key;
@@ -87,13 +87,17 @@ public class Start
                 }
             }
         }
-
-        void Error()
-        {
-            Clear();
-            WriteLine("\nВы ошиблись, попробуйте снова\n");
-        }
     }
+    
+    /// <summary>
+    /// метод выводит сообщение об ошибке
+    /// </summary>
+    public void Error()
+    {
+        Clear();
+        WriteLine("\nВы ошиблись, попробуйте снова\n");
+    }
+    
     #endregion
     
 }

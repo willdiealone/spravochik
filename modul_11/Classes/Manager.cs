@@ -5,20 +5,20 @@ using static WorkableWithFile;
 
 public class Manager : Human, ISetableData
 {
-    #region Delegate
+    #region PublicDelegate
     
     public delegate void SerializeDelegate(List<Person> _persons);
     public event DeserializeDelegate DeserializeEvent;
 
     #endregion
     
-    #region event
+    #region PublicEvent
     public event SerializeDelegate SerializeEvent;
     public delegate List<Person> DeserializeDelegate();
 
     #endregion
 
-    #region Construct
+    #region PublicConstructor
 
     public Manager()
     {
@@ -31,6 +31,9 @@ public class Manager : Human, ISetableData
 
     #region PublicOverrideMethods
 
+    /// <summary>
+    /// переопределенный мтод выводит всех пользователей на экран
+    /// </summary>
     public override void GetAllContact()
     {
         if (_persons.Count >= 1)
@@ -53,7 +56,7 @@ public class Manager : Human, ISetableData
     #region ProtectedOverrideMethods
 
     /// <summary>
-    /// Метод выводит данные в консоль
+    /// переопределенный метод который выводит пользователя в определенном формате
     /// </summary>
     /// <param name="item"></param>
     protected override void WriteToConsole(Person item)
@@ -190,11 +193,10 @@ public class Manager : Human, ISetableData
                 }
             }
         }
-        
     }
     
     /// <summary>
-    /// метод возвращает человека по айди
+    /// метод возвращает пользователя по айди
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -349,10 +351,7 @@ public class Manager : Human, ISetableData
                     return; 
                 } 
             }
-        
         }
-
-        
     }
 
     /// <summary>
@@ -372,5 +371,4 @@ public class Manager : Human, ISetableData
 
     #endregion
 
-   
 }

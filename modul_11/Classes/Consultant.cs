@@ -6,20 +6,20 @@ namespace modul_11.Classes;
 
 public class Consultant : Human
 {
-    #region Delegate
+    #region PublicDelegate
     
     public delegate void SerializeDelegate(List<Person> _persons);
     public event DeserializeDelegate DeserializeEvent;
 
     #endregion
     
-    #region event
+    #region PublicEvent
     public event SerializeDelegate SerializeEvent;
     public delegate List<Person> DeserializeDelegate();
 
     #endregion
     
-    #region Construct
+    #region PublicConstruct
     public Consultant()
     {
         DeserializeEvent += DeseriaizationToJson;
@@ -31,6 +31,9 @@ public class Consultant : Human
 
     #region PublicOverrideMethods
     
+    /// <summary>
+    /// переопределенный метод выводит всех пользователей на экран
+    /// </summary>
     public override void GetAllContact()
     {
         if (_persons.Count >= 1)
@@ -55,6 +58,10 @@ public class Consultant : Human
 
     #region ProtectedOverrideMethods
     
+    /// <summary>
+    /// переопределенный метод который выводит пользователя в определенном формате
+    /// </summary>
+    /// <param name="item"></param>
     protected override void WriteToConsole(Person item)
     {
         WriteLine("Айди: {0}\nИмя: {1}\nФамилия: {2}\nОтчество: {3}\nНомер телефона: {4}\nCеррия и номер паспорта: {5}\n",
@@ -70,6 +77,9 @@ public class Consultant : Human
 
     #region PublicMethods
 
+    /// <summary>
+    /// метод изменения данных пользователя по айди
+    /// </summary>
     public void ChangeNumberPersonById()
     {
         if (_persons != null)
